@@ -1,0 +1,15 @@
+bb-s3-copy
+│
+├── src/
+│   └── bb_s3_copy/
+│       ├── __init__.py
+│       ├── bb.py
+│       ├── adapters/
+│       ├── domain/
+│       └── services/
+│
+├── tests/
+├── pyproject.toml
+├── README.md
+├── LICENSE
+└── .gitignore
