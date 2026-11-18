@@ -36,10 +36,7 @@ class S3CopyRequestValidator:
                 "Source prefix is required."
             )
 
-        if not request.destination.prefix:
-            raise InvalidConfigurationException(
-                "Destination prefix is required."
-            )
+        # destination.prefix may be empty when copying to the bucket root.
 
         if (
             request.conflict_strategy
