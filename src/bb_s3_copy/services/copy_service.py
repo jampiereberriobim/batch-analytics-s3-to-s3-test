@@ -117,18 +117,16 @@ class CopyService:
         ).lstrip("/")
 
         if request.preserve_directory_structure:
-            destination_key = (
-                destination_prefix.rstrip("/")
-                + "/"
-                + relative_key
-            )
+            path_to_copy = relative_key
         else:
-            filename = relative_key.split("/")[-1]
-            destination_key = (
-                destination_prefix.rstrip("/")
-                + "/"
-                + filename
-            )
+            path_to_copy = relative_key.split("/")[-1]
+
+        # An empty destination_prefix means the bucket root.
+        normalized_prefix = (destination_prefix or "").strip("/")
+        if normalized_prefix:
+            destination_key = f"{normalized_prefix}/{path_to_copy}"
+        else:
+            destination_key = path_to_copy
 
         return self._apply_filename_flag(
             destination_key,
@@ -149,7 +147,7 @@ class CopyService:
 
         directory, separator, filename = destination_key.rpartition("/")
 
-        # Treat everything from the first dot onward as the extension chain.
+        # Preserve the complete extension chain.
         # Example: reporte.csv.dek.enc -> REPORTE.csv.dek.enc
         filename_base, dot, extension = filename.partition(".")
 
