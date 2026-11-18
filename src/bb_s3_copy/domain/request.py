@@ -22,3 +22,4 @@ class S3CopyRequest:
     delete_source: bool = False
     fail_if_not_found: bool = True
     conflict_strategy: str = "overwrite"
+    flag_name_file: str = ""
