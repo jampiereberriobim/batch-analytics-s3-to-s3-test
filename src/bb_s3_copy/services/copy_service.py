@@ -8,10 +8,6 @@ from bb_s3_copy.domain.result import S3CopyResult
 from bb_s3_copy.logger import get_logger
 
 
-
-
-
-
 class CopyService:
 
     def __init__(self):
@@ -40,7 +36,6 @@ class CopyService:
         deleted_objects = 0
         failed_objects = 0
 
-        # Fragmento principal de CopyService
         for obj in objects:
             try:
                 destination_key = self._build_destination_key(
@@ -122,16 +117,42 @@ class CopyService:
         ).lstrip("/")
 
         if request.preserve_directory_structure:
-            return (
+            destination_key = (
                 destination_prefix.rstrip("/")
                 + "/"
                 + relative_key
             )
+        else:
+            filename = relative_key.split("/")[-1]
+            destination_key = (
+                destination_prefix.rstrip("/")
+                + "/"
+                + filename
+            )
 
-        filename = relative_key.split("/")[-1]
-
-        return (
-            destination_prefix.rstrip("/")
-            + "/"
-            + filename
+        return self._apply_filename_flag(
+            destination_key,
+            request.flag_name_file,
         )
+
+    @staticmethod
+    def _apply_filename_flag(destination_key: str, flag_name_file: str) -> str:
+        flag = (flag_name_file or "").strip().lower()
+
+        if flag not in ("", "upper", "lower"):
+            raise ValueError(
+                "flag_name_file must be 'upper', 'lower', or empty."
+            )
+
+        if not flag:
+            return destination_key
+
+        directory, separator, filename = destination_key.rpartition("/")
+        if flag == "upper":
+            filename = filename.upper()
+        else:
+            filename = filename.lower()
+
+        if separator:
+            return f"{directory}/{filename}"
+        return filename
