@@ -38,5 +38,5 @@ class RequestFactory:
                 "conflict_strategy",
                 "overwrite",
             ),
-            
+            flag_name_file=config.get("flag_name_file") or "",
         )
