@@ -148,10 +148,17 @@ class CopyService:
             return destination_key
 
         directory, separator, filename = destination_key.rpartition("/")
+
+        # Treat everything from the first dot onward as the extension chain.
+        # Example: reporte.csv.dek.enc -> REPORTE.csv.dek.enc
+        filename_base, dot, extension = filename.partition(".")
+
         if flag == "upper":
-            filename = filename.upper()
+            filename_base = filename_base.upper()
         else:
-            filename = filename.lower()
+            filename_base = filename_base.lower()
+
+        filename = filename_base + dot + extension
 
         if separator:
             return f"{directory}/{filename}"
